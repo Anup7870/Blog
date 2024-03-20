@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import axios from "axios";
-import OAuth from "../components/Oauth";
+import OAuth from "../components/OAuth";
 export default function SignUp() {
    const {
       register,

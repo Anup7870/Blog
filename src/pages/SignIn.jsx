@@ -9,7 +9,7 @@ import {
    signInSucess,
    signInFailure,
 } from "../redux/user/userSlice.js";
-import OAuth from "../components/Oauth.jsx";
+import OAuth from "../components/OAuth.jsx";
 export default function SignIn() {
    const {
       register,
