@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 export default function DashPost() {
    const user = useSelector((state) => state.user.user);
    const [userPost, setUserPost] = useState([]);
+   const [showMore, setShowMore] = useState(true);
    console.log(userPost);
    useEffect(() => {
       const fetUserPost = async () => {
@@ -15,6 +16,7 @@ export default function DashPost() {
             );
             if (post.status === 200) {
                setUserPost(post.data.post);
+               if (post.data.post.length < 9) setShowMore(false);
             }
          } catch (err) {
             console.log(err);
@@ -22,8 +24,23 @@ export default function DashPost() {
       };
       if (user.isAdmin) fetUserPost();
    }, [user._id]);
+
+   const handleShowMore = async () => {
+      const startIndex = userPost.length;
+      try {
+         const post = await axios.get(
+            `/api/post/getPosts?userId=${user._id}&startIndex=${startIndex}`
+         );
+         if (post.status === 200) {
+            setUserPost((prev) => [...prev, ...post.data.post]);
+            if (post.data.post.length < 9) setShowMore(false);
+         }
+      } catch (err) {
+         console.log(err);
+      }
+   };
    return (
-      <div className=' table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
+      <div className=' table-auto overflow-x-auto  md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
          {user.isAdmin && userPost.length > 0 ? (
             <>
                <Table hoverable className='shadow-md'>
@@ -76,6 +93,13 @@ export default function DashPost() {
                      </Table.Body>
                   ))}
                </Table>
+               {showMore && (
+                  <button
+                     onClick={handleShowMore}
+                     className='w-full text-teal-500 self-center text-sm py-7'>
+                     Show More
+                  </button>
+               )}
             </>
          ) : (
             <p>You have no post yet</p>
