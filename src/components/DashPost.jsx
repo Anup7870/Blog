@@ -3,11 +3,15 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { Table } from "flowbite-react";
 import { Link } from "react-router-dom";
+import { Modal, Button } from "flowbite-react";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
 export default function DashPost() {
    const user = useSelector((state) => state.user.user);
    const [userPost, setUserPost] = useState([]);
    const [showMore, setShowMore] = useState(true);
-   console.log(userPost);
+   const [showModel, setShowModel] = useState(false);
+   const [postIdToDelete, setPostIdToDelete] = useState("");
+   // console.log(userPost);
    useEffect(() => {
       const fetUserPost = async () => {
          try {
@@ -34,6 +38,22 @@ export default function DashPost() {
          if (post.status === 200) {
             setUserPost((prev) => [...prev, ...post.data.post]);
             if (post.data.post.length < 9) setShowMore(false);
+         }
+      } catch (err) {
+         console.log(err);
+      }
+   };
+   const handleDeletePost = async () => {
+      setShowModel(false);
+      try {
+         const post = await axios.delete(
+            `/api/post/deletePost/${postIdToDelete}/${user._id}`
+         );
+         if (post.status === 200) {
+            setUserPost((prev) =>
+               prev.filter((post) => post._id !== postIdToDelete)
+            );
+            setShowModel(false);
          }
       } catch (err) {
          console.log(err);
@@ -78,7 +98,12 @@ export default function DashPost() {
                            </Table.Cell>
                            <Table.Cell>{post.catergory}</Table.Cell>
                            <Table.Cell>
-                              <span className='font-medium text-red-500 hover:underline cursor-pointer'>
+                              <span
+                                 onClick={() => {
+                                    setShowModel(true);
+                                    setPostIdToDelete(post._id);
+                                 }}
+                                 className='font-medium text-red-500 hover:underline cursor-pointer'>
                                  Delete
                               </span>
                            </Table.Cell>
@@ -104,6 +129,29 @@ export default function DashPost() {
          ) : (
             <p>You have no post yet</p>
          )}
+         <Modal
+            show={showModel}
+            onClose={() => setShowModel(false)}
+            popup
+            size='md'>
+            <Modal.Header />
+            <Modal.Body>
+               <div className='text-center'>
+                  <HiOutlineExclamationCircle className='h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto' />
+                  <h3 className='mb-5 text-lg text-gray-500 dark:text-gray-400'>
+                     Are you sure you want to delete your account
+                  </h3>
+                  <div className='flex justify-center gap-4'>
+                     <Button color='failure' onClick={handleDeletePost}>
+                        Yes Delete
+                     </Button>
+                     <Button color='gray' onClick={() => setShowModel(false)}>
+                        No, cancel
+                     </Button>
+                  </div>
+               </div>
+            </Modal.Body>
+         </Modal>
       </div>
    );
 }
