@@ -46,9 +46,7 @@ export default function DashPost() {
    const handleDeletePost = async () => {
       setShowModel(false);
       try {
-         const post = await axios.delete(
-            `/api/user/deleteUser/${userIdToDelete}/${user._id}`
-         );
+         const post = await axios.delete(`/api/user/delete/${user._id}`);
          if (post.status === 200) {
             setUsers((prev) =>
                prev.filter((post) => post._id !== userIdToDelete)
