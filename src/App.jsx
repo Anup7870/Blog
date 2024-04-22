@@ -13,6 +13,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import OnlyAdminPrivateRoute from "./components/OnlyAdminPrivateRoute";
 import CreatePost from "./pages/CreatePost";
 import UpdatePost from "./pages/UpdatePost";
+import PostPage from "./pages/PostPage";
 
 function App() {
    const [count, setCount] = useState(0);
@@ -26,6 +27,7 @@ function App() {
             <Route path='projects' element={<Project />} />
             <Route path='signUp' element={<SignUp />} />
             <Route path='signIn' element={<SignIn />} />
+            <Route path='post/:postSlug' element={<PostPage />} />
             <Route element={<PrivateRoute />}>
                <Route path='dashboard' element={<Dashboard />} />
             </Route>

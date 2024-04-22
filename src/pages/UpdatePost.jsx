@@ -37,6 +37,7 @@ export default function UpdatePost() {
    const [formData, setFormData] = useState(null);
    const { postId } = useParams();
    // saving the image to firebase storage
+   // console.log(formData);
    const imageUplaod = async (data) => {
       console.log(data);
       try {
@@ -126,6 +127,7 @@ export default function UpdatePost() {
                setValue("content", data.data.post[0].content);
                setValue("catergory", data.data.post[0].catergory);
                setValue("image", data.data.post[0].image);
+               setFormData(data.data.post[0]);
             });
       } catch (error) {
          console.log(error);
@@ -206,7 +208,7 @@ export default function UpdatePost() {
             )}
             <ReactQuill
                theme='snow'
-               // value={formData ? formData.content : ""}
+               value={formData ? formData.content : ""}
                // {...register("content", { required: true })}
                placeholder='write something'
                className='h-72 mb-12'
