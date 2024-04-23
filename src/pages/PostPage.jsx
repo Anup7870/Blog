@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import { Button, Spinner } from "flowbite-react";
 import CallToAction from "../components/CallToAction";
+import CommentSection from "../components/CommentSection";
 
 export default function PostPage() {
    const { postSlug } = useParams();
@@ -68,6 +69,7 @@ export default function PostPage() {
          <div className='max-w-4xl mx-auto w-full'>
             <CallToAction />
          </div>
+         <CommentSection postId={post._id} />
       </main>
    );
 }
