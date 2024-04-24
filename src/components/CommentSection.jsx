@@ -4,12 +4,13 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import Comment from "./Comment";
+import { useNavigate } from "react-router-dom";
 export default function CommentSection({ postId }) {
    const { user } = useSelector((state) => state.user);
    const [comments, setComments] = useState("");
    const [commentError, setCommentError] = useState(null);
-
    const [commentList, setCommentList] = useState([]);
+   const navigate = useNavigate();
    useEffect(() => {
       const fetchComments = async () => {
          try {
@@ -17,7 +18,7 @@ export default function CommentSection({ postId }) {
                `/api/comment/getPostComments/${postId}`
             );
             setCommentList(res.data);
-            console.log(res.data);
+            // console.log(res.data);
          } catch (err) {
             console.log(err);
          }
@@ -38,13 +39,43 @@ export default function CommentSection({ postId }) {
          if (res.status === 201) {
             setComments("");
             setCommentError(null);
-            setCommentList([res.dat, ...commentList]);
+            setCommentList([res.data, ...commentList]);
          }
       } catch (err) {
          setCommentError(err.message);
          console.log(err);
       }
    };
+
+   const handleLike = async (commentId) => {
+      try {
+         if (!user) {
+            navigate("/signIn");
+            return;
+         }
+
+         const res = await axios.put(`/api/comment/likeComment/${commentId}`);
+         if (res.status === 200) {
+            const data = res.data;
+            // console.log(data);
+            setCommentList(
+               commentList.map((comment) => {
+                  // console.log(comment);
+                  return comment._id === commentId
+                     ? {
+                          ...comment,
+                          likes: data.likes,
+                          numberOfLikes: data.likes.length,
+                       }
+                     : comment;
+               })
+            );
+         }
+      } catch (err) {
+         console.log(err);
+      }
+   };
+
    return (
       <div className='max-w-2xl mx-auto w-full p-3'>
          {user ? (
@@ -101,7 +132,10 @@ export default function CommentSection({ postId }) {
             </div>
          )}
          {commentList.map((comment) => {
-            return <Comment key={comment._id} comment={comment} />;
+            console.log(comment);
+            return (
+               <Comment key={comment} comment={comment} onLike={handleLike} />
+            );
          })}
       </div>
    );
